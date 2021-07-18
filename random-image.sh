@@ -155,10 +155,10 @@ while [ "$SUB_ITERATION" -lt "$NUM_SUBS" ]; do
             continue;
         fi
 
-        filename="$(basename -- "$URL")"
+        filename="$(basename -- "$IMG_URL")"
         extension="${filename##*.}"
 
-        wget -O "imgs/${TITLE}.${extension}" "$URL"
+        wget -O "desktop_backgrounds/${TITLE}.${extension}" "$IMG_URL"
 
         exit 0;
     done
