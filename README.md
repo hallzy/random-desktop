@@ -9,3 +9,13 @@ Otherwise, it will set the background to a random image in the
 
 The `downloaded_background_images.txt` file keeps track of reddit URLs that this
 script has checked so that it doesn't download the same image again.
+
+# Options
+
+## local
+
+Run script with `local` to only use local images
+
+```
+$ ./random-image.sh local
+```
