@@ -1,5 +1,26 @@
 #!/bin/bash
 
+SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+
+getLocalImg() {
+    keepImg="n"
+    while [ "$keepImg" = "n" ] || [ "$keepImg" = "N" ]; do
+        # No new images on reddit. Fallback to a saved image on disk.
+
+        localimg="$(env ls "$SCRIPTPATH/desktop_backgrounds/" | shuf -n 1)"
+
+        feh --bg-max "$SCRIPTPATH/desktop_backgrounds/${localimg}"
+
+        notify-send -t 0 'Background Image Updated' "From local drive: $localimg"
+
+        if [ "$isCron" -eq 1 ]; then
+            exit 0;
+        fi
+
+        read -r -p "Do you want to keep this image? (Y/n) " keepImg
+    done
+}
+
 # Create cronjob that runs every hour on the hour:
 # 0 *   *   *   * DISPLAY=:0 /path/to/random-image.sh cron > /dev/null 2>&1
 
@@ -8,7 +29,10 @@ if [ "$1" = "cron" ]; then
     isCron=1;
 fi
 
-SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+if [ "$1" = "local" ]; then
+    getLocalImg
+    exit 0
+fi
 
 # Retrieve photos from these subreddits
 SUBREDDITS='
@@ -164,10 +188,4 @@ while [ "$SUB_ITERATION" -lt "$NUM_SUBS" ]; do
     done
 done
 
-# No new images on reddit. Fallback to a saved image on disk.
-
-localimg="$(env ls "$SCRIPTPATH/desktop_backgrounds/" | shuf -n 1)"
-
-feh --bg-max "$SCRIPTPATH/desktop_backgrounds/${localimg}"
-
-notify-send -t 0 'Background Image Updated' "From local drive: $localimg"
+getLocalImg
