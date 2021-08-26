@@ -49,6 +49,8 @@ SUBREDDITS='
     ]
 }'
 
+SKIPPED=''
+
 DEBUG="/tmp/random-image-debug.log"
 true > "$DEBUG"
 
@@ -80,7 +82,11 @@ while [ "$SUB_ITERATION" -lt "$NUM_SUBS" ]; do
     echo "Checking Subreddit - '$SUB'" | tee -a "$DEBUG"
 
     # Download the JSON for the chosen subreddit
-    wget -q -O "$REDDIT" "https://www.reddit.com/r/${SUB}/new.json"
+    wget -q -O "$REDDIT" "https://www.reddit.com/r/${SUB}/new.json?limit=100"
+    if [ "$?" -ne 0 ]; then
+        SKIPPED="$SKIPPED\nSKIPPING SUBREDDIT '$SUB'. Error occurred while downloading json";
+        continue;
+    fi
 
     # Find out how many posts we downloaded in the JSON... I think this is
     # always 25? Not sure how to change that...
@@ -184,8 +190,10 @@ while [ "$SUB_ITERATION" -lt "$NUM_SUBS" ]; do
 
         wget -O "desktop_backgrounds/${TITLE}.${extension}" "$IMG_URL"
 
+        printf "$SKIPPED\n"
         exit 0;
     done
 done
 
 getLocalImg
+printf "$SKIPPED\n"
