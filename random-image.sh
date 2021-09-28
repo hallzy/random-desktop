@@ -11,7 +11,7 @@ getLocalImg() {
 
         feh --bg-max "$SCRIPTPATH/desktop_backgrounds/${localimg}"
 
-        notify-send -t 0 'Background Image Updated' "From local drive: $localimg"
+        notify-send -t "$notifySendDuration" 'Background Image Updated' "From local drive: $localimg"
 
         if [ "$isCron" -eq 1 ]; then
             exit 0;
@@ -25,8 +25,10 @@ getLocalImg() {
 # 0 *   *   *   * DISPLAY=:0 /path/to/random-image.sh cron > /dev/null 2>&1
 
 isCron=0
+notifySendDuration=10000
 if [ "$1" = "cron" ]; then
     isCron=1;
+    notifySendDuration=0
 fi
 
 if [ "$1" = "local" ]; then
@@ -174,7 +176,7 @@ while [ "$SUB_ITERATION" -lt "$NUM_SUBS" ]; do
         feh --bg-max "$IMG_URL"
 
         # Tell me about the change and what the photo title is
-        notify-send -t 0 'Background Image Updated' "From 'r/$SUB': $TITLE"
+        notify-send -t "$notifySendDuration" 'Background Image Updated' "From 'r/$SUB': $TITLE"
 
         if [ "$isCron" -eq 1 ]; then
             exit 0;
